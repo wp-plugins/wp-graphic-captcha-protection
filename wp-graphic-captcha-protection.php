@@ -26,7 +26,7 @@ define('wpgcp_SVN',true);error_reporting(E_ERROR);if(!is_admin()){function plgwp
 		        <div style="clear: both;height:20px;"></div>
 	        </div>
 	        <?php
-}add_action('register_form','plgwpgcp_register_form_add_field');function plgwpgcp_register_post($login,$email,$errors){if(""==session_id())@session_start();if(isset($_POST['sg_code'])&&$_POST['sg_code']!=''){if(isset($_SESSION['sg_code'])&&$_SESSION['sg_code']==$_POST['sg_code']){unset($_SESSION['sg_code']);return $errors;}}$errors->add('captcha_wrong','<strong>'.__('ERROR','captcha').'</strong>: '.__('Graphic Captcha Code is invalid.','plgwpgcp'));return $errors;}add_action('register_post','plgwpgcp_register_post',10,3);}if(is_admin()){add_action('admin_enqueue_scripts','plgwpgcp_admin_scripts');function plgwpgcp_admin_scripts(){if(isset($_GET['page'])&&$_GET['page']=='plgwpgcp_settings_page'){wp_enqueue_media();}}add_action('admin_menu','register_plgwpgcp_settings_page');function register_plgwpgcp_settings_page(){add_submenu_page('options-general.php','Graphic Captcha','Graphic Captcha','manage_options','plgwpgcp_settings_page','plgwpgcp_settings_page_callback');}function plgwpgcp_settings_page_callback(){$domain=get_site_url();$image_url=plugins_url('images/',__FILE__);if(isset($_POST['action'])&&$_POST['action']=='update'&&check_admin_referer('name_AB0071382EEE')){if(isset($_POST['notify_developer']))$notify_developer=intval($_POST['notify_developer']);else $notify_developer=0;$notify_developer_sent=intval($_POST['notify_developer_sent']);if($notify_developer&&$notify_developer_sent==0){$notify_developer_sent=1;wpgcp_NotityDeveloper();}if(!isset($_POST['on_login_page']))$_POST['on_login_page']=0;if(!isset($_POST['on_registration_page']))$_POST['on_registration_page']=0;if(!isset($_POST['show_copyright']))$_POST['show_copyright']=0;if(!isset($_POST['notify_developer']))$_POST['notify_developer']=0;$params=array('on_login_page'=>intval($_POST['on_login_page']),'on_registration_page'=>intval($_POST['on_registration_page']),'captcha_length'=>3,'captcha_size'=>3,'show_copyright'=>intval($_POST['show_copyright']),'notify_developer'=>$notify_developer,'notify_developer_sent'=>$notify_developer_sent);$error=wpgcp_CheckLimits($params,true);if($error!==true){if(!wpgcp_SVN)$params['show_copyright']=1;$params['on_lostpassword_page']=0;$params['on_comments_page']=0;$params['on_comments_logged_page']=0;}wpgcp_SetExtraParams(1,$params);echo '<div id="setting-error-settings_updated" class="updated settings-error"><p><strong>Settings saved.</strong></p></div>';}else $params=wpgcp_GetExtraParams(1);$error=wpgcp_CheckLimits($params);if($error!==true){?>
+}add_action('register_form','plgwpgcp_register_form_add_field');function plgwpgcp_register_post($login,$email,$errors){if(""==session_id())@session_start();if(isset($_POST['sg_code'])&&$_POST['sg_code']!=''){if(isset($_SESSION['sg_code'])&&$_SESSION['sg_code']==$_POST['sg_code']){unset($_SESSION['sg_code']);return $errors;}}$errors->add('captcha_wrong','<strong>'.__('ERROR','captcha').'</strong>: '.__('Graphic Captcha Code is invalid.','plgwpgcp'));return $errors;}add_action('register_post','plgwpgcp_register_post',10,3);}if(is_admin()){add_action('admin_enqueue_scripts','plgwpgcp_admin_scripts');function plgwpgcp_admin_scripts(){if(isset($_GET['page'])&&$_GET['page']=='plgwpgcp_settings_page'){wp_enqueue_media();}}add_action('admin_menu','register_plgwpgcp_settings_page');function register_plgwpgcp_settings_page(){add_submenu_page('options-general.php','Graphic Captcha','Graphic Captcha','manage_options','plgwpgcp_settings_page','plgwpgcp_settings_page_callback');}function plgwpgcp_settings_page_callback(){$domain=get_site_url();$image_url=plugins_url('images/',__FILE__);if(isset($_POST['action'])&&$_POST['action']=='update'&&check_admin_referer('name_AB0071382EEE')){if(isset($_POST['notify_developer']))$notify_developer=intval($_POST['notify_developer']);else $notify_developer=0;$notify_developer_sent=intval($_POST['notify_developer_sent']);if($notify_developer&&$notify_developer_sent==0){$notify_developer_sent=1;wpgcp_NotityDeveloper();}if(!isset($_POST['on_login_page']))$_POST['on_login_page']=0;if(!isset($_POST['on_registration_page']))$_POST['on_registration_page']=0;if(!isset($_POST['show_copyright']))$_POST['show_copyright']=0;if(!isset($_POST['notify_developer']))$_POST['notify_developer']=0;$params=array('on_login_page'=>intval($_POST['on_login_page']),'on_registration_page'=>intval($_POST['on_registration_page']),'captcha_length'=>intval($_POST['captcha_length']),'captcha_size'=>intval($_POST['captcha_size']),'show_copyright'=>intval($_POST['show_copyright']),'notify_developer'=>$notify_developer,'notify_developer_sent'=>$notify_developer_sent,'reg_code'=>trim($_POST['reg_code']));$error=wpgcp_CheckLimits($params,true);if($error!==true){$params['show_copyright']=1;}wpgcp_SetExtraParams(1,$params);echo '<div id="setting-error-settings_updated" class="updated settings-error"><p><strong>Settings saved.</strong></p></div>';}else $params=wpgcp_GetExtraParams(1);$error=wpgcp_CheckLimits($params);if($error!==true){?>
             <script>
             jQuery(document).ready(function(){
                 alert('<?php echo $error;?> Plugin will not work correct. Please get PRO version.');
@@ -54,10 +54,8 @@ define('wpgcp_SVN',true);error_reporting(E_ERROR);if(!is_admin()){function plgwp
 			<th scope="row"><?php _e('Product Type','plgwpgcp')?></th>
 			<td>
 				<?php
- $error=wpgcp_CheckLimits($params,true);if($error===true){echo 'PRO version';$version_txt='';$version_disable='';}else{$version_txt='<b>[Available in PRO version only]</b>';$version_disable=' disabled ';?>
+ $error=wpgcp_CheckLimits($params,true);$version_txt='<b>[Available in PRO version only]</b>';$version_disable=' disabled ';?>
 					Basic version (<b>To get PRO version, please <a target="_blank" href="https://www.siteguarding.com/en/wordpress-graphic-captcha-protection">click here</a></b>)
-					<?php
-}?>
 			</td>
 			</tr>
 			
@@ -66,7 +64,7 @@ define('wpgcp_SVN',true);error_reporting(E_ERROR);if(!is_admin()){function plgwp
 
 			
 			<?php
- if(!isset($params['on_login_page']))$params['on_login_page']=1;if(!isset($params['on_registration_page']))$params['on_registration_page']=1;if(!isset($params['on_lostpassword_page']))$params['on_lostpassword_page']=0;if(!isset($params['on_comments_page']))$params['on_comments_page']=0;if(!isset($params['on_comments_logged_page']))$params['on_comments_logged_page']=0;?>
+ if(!isset($params['on_login_page']))$params['on_login_page']=1;if(!isset($params['on_registration_page']))$params['on_registration_page']=1;?>
 			
 			<tr class="line_4">
 			<th scope="row"><?php _e('Enable captcha','plgwpgcp')?></th>
@@ -85,21 +83,21 @@ define('wpgcp_SVN',true);error_reporting(E_ERROR);if(!is_admin()){function plgwp
 			<tr class="line_4">
 			<th scope="row"></th>
 			<td>
-	            <input <?php echo $version_disable;?> type="checkbox" > on Lost Password page <?php echo $version_txt;?> 
+	            <input <?php echo $version_disable;?> name="on_lostpassword_page" type="checkbox" id="on_lostpassword_page" value="1" <?php if(intval($params['on_lostpassword_page'])==1)echo 'checked="checked"';?>> on Lost Password page <?php echo $version_txt;?> 
 			</td>
 			</tr>
 			
 			<tr class="line_4">
 			<th scope="row"></th>
 			<td>
-	            <input <?php echo $version_disable;?>  type="checkbox"> on Comments page for not logged users <?php echo $version_txt;?>
+	            <input <?php echo $version_disable;?> name="on_comments_page" type="checkbox" id="on_comments_page" value="1" <?php if(intval($params['on_comments_page'])==1)echo 'checked="checked"';?>> on Comments page for not logged users <?php echo $version_txt;?>
 			</td>
 			</tr>
 			
 			<tr class="line_4">
 			<th scope="row"></th>
 			<td>
-	            <input <?php echo $version_disable;?>  type="checkbox"> on Comments page for logged users <?php echo $version_txt;?>
+	            <input <?php echo $version_disable;?> name="on_comments_logged_page" type="checkbox" id="on_comments_logged_page" value="1" <?php if(intval($params['on_comments_logged_page'])==1)echo 'checked="checked"';?>> on Comments page for logged users <?php echo $version_txt;?>
 			</td>
 			</tr>
 			
@@ -139,14 +137,18 @@ define('wpgcp_SVN',true);error_reporting(E_ERROR);if(!is_admin()){function plgwp
 			<tr class="line_4"><th scope="row"></th><td class="sepbot"></td></tr>
 			
 			<?php
- if(!isset($params['show_copyright']))$params['show_copyright']=0;if(!isset($params['notify_developer']))$params['notify_developer']=0;?>
+ if(!isset($params['show_copyright']))$params['show_copyright']=0;if(!isset($params['notify_developer']))$params['notify_developer']=0;if(!wpgcp_SVN){?>
 			<tr class="line_4">
 			<th scope="row"></th>
 			<td>
 	            <b>To get PRO version, please <a target="_blank" href="https://www.siteguarding.com/en/wordpress-graphic-captcha-protection">click here</a></b>
 			</td>
 			</tr>
-
+			<?php
+}else{?>
+			<input name="reg_code" type="hidden" value="">
+			<?php
+}?>
 			
 			<tr class="line_4">
 			<th scope="row"><?php _e('Notify developers','plgwpgcp')?></th>
@@ -210,8 +212,9 @@ wp_nonce_field('name_AB0071382EEE');?>
                 `var_value` char(255) CHARACTER SET utf8 NOT NULL,
                 PRIMARY KEY (`id`),
                 KEY `user_id` (`user_id`)
-			) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;';require_once(ABSPATH.'wp-admin/includes/upgrade.php');dbDelta($sql);if(!wpgcp_SVN)wpgcp_NotityDeveloper();$params=array('captcha_length'=>3,'captcha_size'=>3,'on_registration_page'=>1,'on_login_page'=>1);wpgcp_SetExtraParams(1,$params);}$message='<b>WP Graphic Captcha Protection</b><br>Please go to administrator area of your website (Settings setion -> Graphic Captcha) to configure WP Graphic Captcha Protection plugin.';wpgcp_NotifyAdmin($message,'WP Graphic Captcha Protection configuration');}register_activation_hook(__FILE__,'plgwpgcp_activation');function plgwpgcp_uninstall(){global $wpdb;$table_name=$wpdb->prefix.'plgwpgcp_config';$wpdb->query('DROP TABLE '.$table_name);}register_uninstall_hook(__FILE__,'plgwpgcp_uninstall');}function wpgcp_PrintCells($params){$domain=get_site_url();$image_url=plugins_url('images/',__FILE__);$error=wpgcp_CheckLimits($params,true);$params['captcha_length']=3;$params['captcha_size']=3;if($params['captcha_size']==100)$cell_size=rand(3,5);else $cell_size=3;$cell_css_size=round(270/$cell_size)-1;$cell_margin_list=array(3=>0);$cell_margin=$cell_margin_list[$cell_size];?>
+			) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;';require_once(ABSPATH.'wp-admin/includes/upgrade.php');dbDelta($sql);if(!wpgcp_SVN)wpgcp_NotityDeveloper();$params=array('captcha_length'=>3,'captcha_size'=>3,'on_registration_page'=>1,'on_login_page'=>1);wpgcp_SetExtraParams(1,$params);}$message='<b>WP Graphic Captcha Protection</b><br>Please go to administrator area of your website (Settings setion -> Graphic Captcha) to configure WP Graphic Captcha Protection plugin.';wpgcp_NotifyAdmin($message,'WP Graphic Captcha Protection configuration');}register_activation_hook(__FILE__,'plgwpgcp_activation');function plgwpgcp_uninstall(){global $wpdb;$table_name=$wpdb->prefix.'plgwpgcp_config';$wpdb->query('DROP TABLE '.$table_name);}register_uninstall_hook(__FILE__,'plgwpgcp_uninstall');}function wpgcp_PrintCells($params){$domain=get_site_url();$image_url=plugins_url('images/',__FILE__);$error=wpgcp_CheckLimits($params,true);$params['captcha_length']=3;$params['captcha_size']=3;if($params['captcha_size']==100)$cell_size=rand(3,5);else $cell_size=intval($params['captcha_size']);$cell_css_size=round(270/$cell_size)-1;$cell_margin_list=array(3=>0);$cell_margin=$cell_margin_list[$cell_size];?>
 	<style>
+	#sg_password_block{width:271px}
 	#siteguarding{position: absolute;right:0;bottom:0;opacity: 0.7; padding:1px 3px; font-size:10px; color:#000; background-color: #fff;line-height:12px;z-index: 10;}
 	#sg_password_area{background-size:100%;width:270px;height:270px; background-color:#9f9f9f;position: relative;border-left: 1px dashed #fff;border-top: 1px dashed #fff;}
 	#sg_canvas{position: absolute; top:0; left:0; z-index: 1;}
@@ -223,15 +226,17 @@ wp_nonce_field('name_AB0071382EEE');?>
 	
 	<img src="<?php echo $image_url;?>show.gif" height="48" width="48" />
 	<?php
- $ttf_file=__DIR__.'/images/font.ttf';$sg_number=array();for($i=0;$i<$params['captcha_length'];$i++){$sg_number[]=$session_code[$i]['number'];}$click_nums=implode(" - ",$sg_number);$im=imagecreate(220,48);$bg=imagecolorallocate($im,255,255,255);$textcolor=imagecolorallocate($im,204,0,0);imagestring($im,3,50,0,'Click the numbers',$textcolor);$textcolor=imagecolorallocate($im,0,0,0);$tmp_result=ImageTTFText($im,$font_size=20,$angl=0,$x=68-(20*($params['captcha_length']-3)+12*($cell_size-3)),$y=42,$textcolor,$ttf_file,$click_nums);if($tmp_result===false)imagestring($im,5,$x=68-(19*($params['captcha_length']-3)+10*($cell_size-3)),25,$click_nums,$textcolor);ob_start();imagepng($im);$png=ob_get_clean();$uri="data:image/png;base64,".base64_encode($png);echo "<img src=".$uri." />";imagedestroy($im);$img_numbers=array();for($i=1;$i<=$cell_size*$cell_size;$i++){$im=imagecreate($cell_css_size,$cell_css_size);$bg=imagecolortransparent($im,imagecolorallocate($im,20,0,0));$tmp_result=ImageTTFText($im,$font_size=rand(30-intval($cell_margin/2),45-intval($cell_margin/2)),$angl=rand(-5,5),$x=rand(30-$cell_margin,35-$cell_margin),$y=rand(60-$cell_margin,65-$cell_margin),$textcolor,$ttf_file,$i);if($tmp_result===false)imagestring($im,5,$x=rand(40-$cell_margin,45-$cell_margin),$y=rand(30-$cell_margin,45-$cell_margin),$i,$textcolor);ob_start();imagepng($im);$png=ob_get_clean();$uri="data:image/png;base64,".base64_encode($png);imagedestroy($im);$img_numbers[$i]=$uri;}?>
+ $ttf_file=__DIR__.'/images/font.ttf';$sg_number=array();for($i=0;$i<$params['captcha_length'];$i++){$sg_number[]=$session_code[$i]['number'];}$click_nums=implode(" - ",$sg_number);$im=imagecreate(220,48);$bg=imagecolorallocate($im,255,255,255);$textcolor=imagecolorallocate($im,204,0,0);imagestring($im,3,50,0,'Click the numbers',$textcolor);$textcolor=imagecolorallocate($im,0,0,0);$tmp_result=ImageTTFText($im,$font_size=20,$angl=0,$x=68-(20*($params['captcha_length']-3)+12*($cell_size-3)),$y=42,$textcolor,$ttf_file,$click_nums);if($tmp_result===false)imagestring($im,5,$x=68-(19*($params['captcha_length']-3)+10*($cell_size-3)),25,$click_nums,$textcolor);ob_start();imagepng($im);$png=ob_get_clean();$uri="data:image/png;base64,".base64_encode($png);echo "<img src=".$uri." />";imagedestroy($im);$img_numbers=array();for($i=1;$i<=$cell_size*$cell_size;$i++){$im=imagecreate($cell_css_size,$cell_css_size);$bg=imagecolortransparent($im,imagecolorallocate($im,20,0,0));$textcolor=imagecolorallocate($im,0,0,0);$tmp_result=ImageTTFText($im,$font_size=rand(30-intval($cell_margin/2),45-intval($cell_margin/2)),$angl=rand(-5,5),$x=rand(30-$cell_margin,35-$cell_margin),$y=rand(60-$cell_margin,65-$cell_margin),$textcolor,$ttf_file,$i);if($tmp_result===false)imagestring($im,5,$x=rand(40-$cell_margin,45-$cell_margin),$y=rand(30-$cell_margin,45-$cell_margin),$i,$textcolor);ob_start();imagepng($im);$png=ob_get_clean();$uri="data:image/png;base64,".base64_encode($png);imagedestroy($im);$img_numbers[$i]=$uri;}?>
 	
 	<div id="sg_password_area">
 	<canvas id="sg_canvas" width="270" height="270"></canvas>
 	<?php
  $cell_h=$cell_css_size+1;$cell_w=$cell_css_size+1;$max_w=270;$start_x=0;$start_y=0;for($i=1;$i<=$cell_size*$cell_size;$i++){$uri=$img_numbers[$numbers[$i-1]];echo '<div id="sg_cell_'.$i.'" class="sg_cell" style="top:'.$start_y.'px; left:'.$start_x.'px;background-image:url(\''.$uri.'\');" onclick="SG_DrawLine(this, \''.$secret_numbers[$i-1].'\');" >'.'</div>';$start_x+=$cell_w;if($start_x>=$max_w){$start_x=0;$start_y+=$cell_h;}}?>
-
+	<?php
+ if(wpgcp_SVN===true||$params['show_copyright']==1){?>
 		<span id="siteguarding"><a target="blank" href="http://www.siteguarding.com" title="SiteGuarding.com - Website Security. Protect your website against malware and hacker exploits.">SiteGuarding.com</a></span>
-
+	<?php
+}?>
 	
 	</div>
 	
@@ -321,8 +326,7 @@ wp_nonce_field('name_AB0071382EEE');?>
               <td width="400" height="60" align="right" bgcolor="#fff" style="background-color: #fff;">
               <table border="0" cellspacing="0" cellpadding="0" bgcolor="#fff" style="background-color: #fff;">
                 <tr>
-                  <td style="font-family:Arial, Helvetica, sans-serif; font-size:11px;"><a href="http://www.siteguarding.com/en/login" target="_blank" st on Registration page 
-			yle="color:#656565; text-decoration: none;">Login</a></td>
+                  <td style="font-family:Arial, Helvetica, sans-serif; font-size:11px;"><a href="http://www.siteguarding.com/en/login" target="_blank" style="color:#656565; text-decoration: none;">Login</a></td>
                   <td width="15"></td>
                   <td width="1" bgcolor="#656565"></td>
                   <td width="15"></td>
