@@ -4,7 +4,7 @@ Donate link: https://www.siteguarding.com/en/website-extensions
 Tags: captcha, admin protection, password, two-factor, authentication, security, login, login security, comments captcha, security plugin, website security, antispam, spam, block spam
 Requires at least: 3.0
 Tested up to: 3.9 
-Stable tag: 1.3
+Stable tag: 1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
