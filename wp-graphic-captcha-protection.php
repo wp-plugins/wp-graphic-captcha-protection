@@ -9,7 +9,7 @@ Author URI: http://www.siteguarding.com
 License: GPLv2
 TextDomain: plgwpgcp
 */
-define('wpgcp_SVN',true);error_reporting(E_ERROR);if(!is_admin()){function plgwpgcp_login_form_add_field(){$params=wpgcp_GetExtraParams(1);if($params['on_login_page']!=1)return;unset($params['sg_code']);?>
+define('wpgcp_SVN',true); error_reporting(E_ERROR);if(!is_admin()){function plgwpgcp_login_form_add_field(){$params=wpgcp_GetExtraParams(1);if($params['on_login_page']!=1)return;unset($params['sg_code']);?>
 	        <div id="sg_password_block">
 		        <?php
  wpgcp_PrintCells($params);?>
